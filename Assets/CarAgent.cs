@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CarAgent : MonoBehaviour
 {
-    public GenerationController controller;
+    public CarGenerationController controller;
 
     public float survivalTime = 0f;
 
@@ -35,6 +35,10 @@ public class CarAgent : MonoBehaviour
             {
                 inputs.Add(hit.distance/maxDetectDistance);
             }
+            else
+            {
+                inputs.Add(1f);
+            }
         }
         double[] output = net.Compute(inputs.ToArray());
         return output;
@@ -60,5 +64,14 @@ public class CarAgent : MonoBehaviour
   
 
         transform.position += transform.forward * acceleration * forwardSpeed * Time.deltaTime;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.CompareTag("Wall"))
+        {
+            controller.RegisterDead();
+            gameObject.SetActive(false);
+        }
     }
 }
